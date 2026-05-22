@@ -27,8 +27,12 @@ EXPIRATION_DATE: int = 10000 * 24 * 60 * 60  # 10000 days (in seconds)
 class GenKeys:
     def __init__(self, cert: str) -> None:
         self.cert: str = cert
-        self.pkey: Path = CERTS_PATH / f'{cert}.pem'
         self.is_apex: bool = self.cert.startswith('com.')
+        self.pkey: Path = (
+            CERTS_PATH / f'{cert}.pem'
+            if not self.is_apex
+            else Path(f'{cert}.pem')
+        )
 
     def generate_pkey(self) -> crypto.PKey:
         if self.pkey.exists():
